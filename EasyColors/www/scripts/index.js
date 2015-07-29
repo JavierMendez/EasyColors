@@ -15,12 +15,32 @@
         // TODO: Cordova has been loaded. Perform any initialization that requires Cordova here.
 
         $(document).ready(function () {
-            //Materialize.toast('I am a toast!', 3000);
+
             randomColor();
 
             $('#colors').submit(function (event) {
                 event.preventDefault();
+
+                //if (validateField('hex', false)) {
+                //    $('body').css('background-color', $('#hex').val());
+                //    $('#rgb').val(getRGB($('#hex').val()));
+                //}
+
+                //if (validateField('rgb', false)) {
+                //    $('body').css('background-color', getHex($('#rgb').val()));
+                //    $('#hex').val(getHex($('#rgb').val()));
+                //}
+
                 randomColor();
+
+            });
+
+            $('#hex').change(function () {
+                validateField('hex', true);
+            });
+
+            $('#rgb').change(function () {
+                validateField('rgb', true);
             });
         });
 
@@ -39,9 +59,9 @@
         
         $('body').css('background-color', color);
 
-        $('#hex').val(color);
+        $('#hex').val(color).colourBrightness();
 
-        $('#rgb').val(getRGB(color));
+        $('#rgb').val(getRGB(color)).colourBrightness();
     };
 
     function getRGB(hex) {
@@ -51,6 +71,31 @@
         var b = bigint & 255;
         
         return 'rgb(' + r + "," + g + "," + b + ')';
+    }
+
+    function getHex(rgb) {
+        rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+        return (rgb && rgb.length === 4) ? "#" +
+         (("0" + parseInt(rgb[1], 10).toString(16)).slice(-2) +
+         ("0" + parseInt(rgb[2], 10).toString(16)).slice(-2) +
+         ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2)).toLocaleUpperCase() : '';
+    };
+
+    function validateField(field, showToast) {
+        var valid = true;
+        var regex = '';
+
+        regex = field == 'hex' ? /^#[A-Fa-f0-9]{6}$/ : /^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i;
+
+        if (!$('#' + field).val().match(regex)) {
+            $('#' + field).val('');
+            if (showToast) {
+                Materialize.toast('Wrong format value!', 1500);
+            }
+            valid &= false;
+        }
+
+        return valid;
     }
 
 } )();
