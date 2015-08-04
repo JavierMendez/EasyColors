@@ -129,8 +129,8 @@
             n = parseInt(i[3] + i[3], 16)
         }
         r = (e * 299 + t * 587 + n * 114) / 1e3;
-        r < 125 ? element.removeClass("white-text").addClass("black-text") : element.removeClass("black-text").addClass("white-text")
-        r < 125 ? $('label').removeClass("white-text").addClass("black-text") : $('label').removeClass("black-text").addClass("white-text")
+        r < 125 ? element.removeClass('light').addClass('dark') : element.removeClass('dark').addClass('light')
+        r < 125 ? $('label').removeClass('light').addClass('dark') : $('label').removeClass('dark').addClass('light')
     }
 
     function generarColores(colorHex, colorRGB) {
