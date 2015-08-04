@@ -31,16 +31,26 @@
                 //    $('#hex').val(getHex($('#rgb').val()));
                 //}
 
-                randomColor();
+                generarColores();
 
             });
 
-            $('#hex').change(function () {
-                validateField('hex', true);
+            $('#hex').on('change', function () {
+
+                var colorHex = $('#hex').val();
+                if (validateField('hex',true)) {
+                    generarColores(colorHex, null);
+                }                
+
             });
 
-            $('#rgb').change(function () {
-                validateField('rgb', true);
+            $('#rgb').on('change', function () {
+
+                var colorRGB = $('#rgb').val();
+                if (validateField('rgb',true)) {
+                    generarColores(null, colorRGB);
+                }
+                
             });
         });
 
@@ -59,9 +69,11 @@
         
         $('body').css('background-color', color);
 
-        $('#hex').val(color).colourBrightness();
+        $('#hex').val(color);
 
-        $('#rgb').val(getRGB(color)).colourBrightness();
+        $('#rgb').val(getRGB(color));
+
+        changeColors($('body'));
     };
 
     function getRGB(hex) {
@@ -96,6 +108,56 @@
         }
 
         return valid;
+    }
+
+    function changeColors(element) {
+        //Based on colourBrightness.js by @jamiebrittain
+        var e, t, n, r, i = element.css("background-color");
+        if (i.match(/^rgb/)) {
+            i = i.match(/rgb\(([^)]+)\)/)[1];
+            i = i.split(/ *, */).map(Number);
+            e = i[0];
+            t = i[1];
+            n = i[2]
+        } else if ("#" == i[0] && 7 == i.length) {
+            e = parseInt(i.slice(1, 3), 16);
+            t = parseInt(i.slice(3, 5), 16);
+            n = parseInt(i.slice(5, 7), 16)
+        } else if ("#" == i[0] && 4 == i.length) {
+            e = parseInt(i[1] + i[1], 16);
+            t = parseInt(i[2] + i[2], 16);
+            n = parseInt(i[3] + i[3], 16)
+        }
+        r = (e * 299 + t * 587 + n * 114) / 1e3;
+        r < 125 ? element.removeClass("white-text").addClass("black-text") : element.removeClass("black-text").addClass("white-text")
+        r < 125 ? $('label').removeClass("white-text").addClass("black-text") : $('label').removeClass("black-text").addClass("white-text")
+    }
+
+    function generarColores(colorHex, colorRGB) {
+
+        if (colorHex === null) {
+
+            if ($('#rgb').is(':valid')) {
+
+                $('#hex').val(getHex(colorRGB));
+
+                $('body').css('background-color', colorRGB);
+            }
+        }
+
+        if (colorRGB === null) {
+
+            if ($('#hex').is(':valid')) {
+
+                var colorGlobalRGB = getRGB(colorHex);
+
+                $('#rgb').val(colorGlobalRGB);
+
+                $('body').css('background-color', colorHex);
+            }
+        }
+
+        changeColors($('body'));
     }
 
 } )();
